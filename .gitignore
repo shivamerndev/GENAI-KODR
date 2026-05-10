@@ -12,7 +12,6 @@ dist
 .env
 dist-ssr
 *.local
-server
 .gitignore
 
 # Editor directories and files
