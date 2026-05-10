@@ -1,6 +1,6 @@
 import { Router } from "express";
 import userAuth from "../middlewares/auth.middleware.js";
-import { eventSource, getChatMessages, getChatTitles, handleMessage } from "../controllers/chat.controller.js";
+import { eventSource, getChatMessages, getChatTitles, handleMessage, handleTempMessage } from "../controllers/chat.controller.js";
 
 const chatRouter = Router();
 
@@ -9,6 +9,7 @@ const chatRouter = Router();
  * @argument req.body = {content:string,chatId:string?}
  */
 chatRouter.post("/", userAuth, handleMessage);
+chatRouter.post("/temp",handleTempMessage)
 chatRouter.get("/", userAuth, getChatTitles)
 
 chatRouter.get("/chat/:chatId",userAuth,getChatMessages)
