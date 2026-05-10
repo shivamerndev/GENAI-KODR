@@ -5,20 +5,21 @@ import z from "zod"
 const client = tavily({ apiKey: "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" });
 
 export const latest_info = tool(async (input) => {
-    console.log("Tool Is Running.", input);
-    // Use the input parameter for dynamic search
+
     const response = await client.search(JSON.stringify(input));
     console.log("Tavily Response", response.results);
-    // Convert array results to a single string for Mistral compatibility
+
     let resultString = "";
     if (Array.isArray(response.results)) {
-        resultString = response.results.map(r =>
-            `Title: ${r.title}\nURL: ${r.url}\nContent: ${r.content || ""}`
-        ).join("\n\n");
+
+        resultString = response.results.map(r => `Title: ${r.title}\nURL: ${r.url}\nContent: ${r.content || ""}`).join("\n\n");
+
     } else {
         resultString = typeof response.results === "string" ? response.results : JSON.stringify(response.results);
     }
-    return resultString; 
+
+    return resultString;
+
 }, {
     name: "latest_info",
     description: "get correct information.",

@@ -1,13 +1,13 @@
 import { ChatMistralAI } from "@langchain/mistralai";
 import { createAgent, toolStrategy } from "langchain"
 import z from "zod";
-// import { latest_info } from "./tavily.service.js";
+import { latest_info } from "./tavily.service.js";
 
 const model = new ChatMistralAI({ model: "mistral-medium-latest" });
 
 const agent = createAgent({
     model: model,
-    tools: [],
+    tools: [latest_info],
     // responseFormat: toolStrategy(z.object({
     //     tavilyRes: z.string().describe("A concise answer for the given input")
     // }))
