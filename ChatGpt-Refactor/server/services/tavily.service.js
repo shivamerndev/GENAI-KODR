@@ -4,9 +4,9 @@ import z from "zod"
 
 const client = tavily({ apiKey: "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" });
 
-export const latest_info = tool(async (input) => {
+export const latest_info = tool(async ({input}) => {
 
-    const response = await client.search(JSON.stringify(input));
+    const response = await client.search(input);
     console.log("Tavily Response", response.results);
 
     let resultString = "";
@@ -24,7 +24,7 @@ export const latest_info = tool(async (input) => {
     name: "latest_info",
     description: "get correct information.",
     schema: z.object({
-        tavilyResponse: z.string().describe("Give concise and simple answer")
+        input: z.string().describe("Give concise and simple answer")
     })
 });
 
