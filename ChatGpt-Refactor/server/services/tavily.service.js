@@ -4,9 +4,16 @@ import z from "zod"
 
 const client = tavily({ apiKey: "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" });
 
+<<<<<<< HEAD
 export const latest_info = tool(async ({ input }) => {
 
     const response = await client.search(input);
+=======
+export const latest_info = tool(async ({input}) => {
+
+    const response = await client.search(input);
+    console.log("Tavily Response", response.results);
+>>>>>>> f1891c96a973f350ba005c6a663701aa9c94b9ca
 
     const response = await client.search(input, {
         searchDepth: "advanced",
