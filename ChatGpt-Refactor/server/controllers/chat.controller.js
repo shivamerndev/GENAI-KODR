@@ -15,7 +15,7 @@ const generateTitle = async (userInput, userId, res) => {
 
 export const handleMessage = async (req, res) => {
 
-    const { input: userInput, chatId, temp } = req.body;
+    const { input: userInput, chatId } = req.body;
 
     res.setHeader("Content-Type", "text/event-stream")
     res.setHeader("Cache-Control", "no-cache")
@@ -58,7 +58,7 @@ export const handleMessage = async (req, res) => {
 
 export const handleTempMessage = async (req, res) => {
 
-    const { input: userInput, temp } = req.body;
+    const { input: userInput } = req.body;
 
     res.setHeader("Content-Type", "text/event-stream")
     res.setHeader("Cache-Control", "no-cache")

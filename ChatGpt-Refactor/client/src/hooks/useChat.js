@@ -1,19 +1,18 @@
 import { useDispatch, useSelector } from "react-redux";
-import { getAiResponse, getChats, getMessages, saveMessages } from "../services/chat.service";
-import { appendAiChunks, appendMessages, appendNewChats, setChats, setMessages } from "../store/features/chat.slice";
+import { getAiResponse, getChats, getMessages, getTempAiResponse, saveMessages } from "../services/chat.service";
+import { appendAiChunks, appendMessages, appendNewChats, setChats, setMessages, setTempChat } from "../store/features/chat.slice";
 import { useNavigate } from "react-router-dom"
 
 const useChat = () => {
 
     const dispatch = useDispatch()
     const navigate = useNavigate()
-    const messages = useSelector(state => state.chat.messages)
 
     const handleCleanUp = () => {
         dispatch(setMessages([]))
     }
 
-    const handleAiResponse = (input, chatId , temp) => {
+    const handleAiResponse = (input, chatId, temp) => {
 
         if (!chatId) {
             dispatch(appendMessages([{
@@ -27,11 +26,30 @@ const useChat = () => {
             }]))
         }
 
-        getAiResponse(input, chatId,temp, (chunk) => {
+        getAiResponse(input, chatId, (chunk) => {
             dispatch(appendAiChunks(chunk))
         }, (title) => {
             navigate("/c/" + title.chatId)
             dispatch(appendNewChats(title))
+        })
+    }
+
+    const handleSetTempChat = ()=>{
+        dispatch(setTempChat())
+    }
+
+    const handleTempAiResponse = (input, temp) => {
+
+        dispatch(appendMessages([{
+            role: "user",
+            content: input,
+        }, {
+            role: "AI",
+            content: "",
+        }]))
+
+        getTempAiResponse(input, temp, (chunk) => {
+            dispatch(appendAiChunks(chunk))
         })
     }
 
@@ -48,7 +66,7 @@ const useChat = () => {
         console.log(data.messages, messages)
     }
 
-    return { handleAiResponse, handleGetChats, handleGetMessages, handleCleanUp }
+    return { handleAiResponse, handleTempAiResponse, handleGetChats, handleGetMessages, handleCleanUp }
 }
 
 export default useChat;

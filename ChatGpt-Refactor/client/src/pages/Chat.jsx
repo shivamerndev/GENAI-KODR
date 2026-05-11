@@ -14,12 +14,16 @@ export default function Chat({ chatId, temp }) {
 
   const [input, setInput] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const { handleAiResponse } = useChat()
+  const { handleAiResponse, handleTempAiResponse } = useChat()
 
   const handleSubmit = () => {
     setIsLoading(true)
 
-    handleAiResponse(input, chatId, temp)
+    if (temp) {
+      handleTempAiResponse(input, true)
+    } else {
+      handleAiResponse(input, chatId)
+    }
     // simulate request
     setTimeout(() => {
       setIsLoading(false)

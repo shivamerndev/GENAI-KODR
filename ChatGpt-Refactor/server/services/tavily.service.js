@@ -4,27 +4,31 @@ import z from "zod"
 
 const client = tavily({ apiKey: "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" });
 
-export const latest_info = tool(async (input) => {
+<<<<<<< HEAD
+export const latest_info = tool(async ({ input }) => {
 
-    const response = await client.search(JSON.stringify(input));
+    const response = await client.search(input);
+=======
+export const latest_info = tool(async ({input}) => {
+
+    const response = await client.search(input);
     console.log("Tavily Response", response.results);
+>>>>>>> f1891c96a973f350ba005c6a663701aa9c94b9ca
 
-    let resultString = "";
-    if (Array.isArray(response.results)) {
+    const response = await client.search(input, {
+        searchDepth: "advanced",
+        maxResults: 5,
+    })
 
-        resultString = response.results.map(r => `Title: ${r.title}\nURL: ${r.url}\nContent: ${r.content || ""}`).join("\n\n");
+    const results = response.results.map(r => r.content)
 
-    } else {
-        resultString = typeof response.results === "string" ? response.results : JSON.stringify(response.results);
-    }
-
-    return resultString;
+    return results.join("\n\n --- \n\n")
 
 }, {
     name: "latest_info",
     description: "get correct information.",
     schema: z.object({
-        tavilyResponse: z.string().describe("Give concise and simple answer")
+        input: z.string().describe("Give concise and simple answer")
     })
 });
 

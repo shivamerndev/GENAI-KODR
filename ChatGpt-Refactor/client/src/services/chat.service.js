@@ -1,6 +1,6 @@
 import axiosUtils from "../utils/axios.utils"
 
-export const getAiResponse = async (input, chatId, temp, getChunks, getTitleData) => {
+export const getAiResponse = async (input, chatId, getChunks, getTitleData) => {
 
     const res = await fetch("/api/chats", {
         method: "POST",
@@ -8,7 +8,7 @@ export const getAiResponse = async (input, chatId, temp, getChunks, getTitleData
             "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ input, chatId, temp })
+        body: JSON.stringify({ input, chatId })
     })
 
 
@@ -28,6 +28,34 @@ export const getAiResponse = async (input, chatId, temp, getChunks, getTitleData
             if (e.startsWith("title:")) {
                 let data = JSON.parse(e.replace("title: ", ""))
                 getTitleData(data)
+            }
+        })
+    }
+}
+
+export const getTempAiResponse = async (input, temp, getChunks) => {
+
+    const res = await fetch("/api/chats/temp", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        credentials: "include",
+        body: JSON.stringify({ input, temp })
+    })
+
+
+    const decoder = new TextDecoder()
+
+    for await (const chunk of res.body) {
+
+        const text = decoder.decode(chunk)
+
+        const lines = text.split("\n\n").forEach(e => {
+
+            if (e.startsWith("chunk:")) {
+                let data = JSON.parse(e.replace("chunk: ", "")).text
+                getChunks(data)
             }
         })
     }
