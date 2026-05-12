@@ -29,7 +29,7 @@ const Messages = ({ chatId, temp, setQuery, setTemp }) => {
     return (
         <>
             {
-                <div className='flex  no-scrollbar flex-col p-4 gap-8 h-full overflow-y-auto'>
+                <div className='flex  no-scrollbar w-10/11 flex-col p-4 gap-8 h-full overflow-y-auto'>
                     {messages.map((message, index) => (<p key={index} className={' py-1 px-4 ' + (message.role === "user" ? "ml-auto   rounded-full bg-zinc-800" : "mr-auto ")}> <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></p>))}
                 </div >
                 // : <div className='flex flex-col justify-center h-full text-3xl items-center gap-4 mt-20'>
