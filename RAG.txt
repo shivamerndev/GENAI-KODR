@@ -1,0 +1,39 @@
+RAG = Retrieval-Augmented Generation.
+Ye AI system ko external data se answer dene me help karta hai.
+
+Simple RAG flow:
+
+1. Data Collect karo
+   PDFs, docs, database, websites ka data lo.
+
+2. Text Chunking
+   Large text ko small-small pieces (chunks) me divide karo.
+
+3. Embeddings Create karo
+   Har chunk ko vector me convert karo using embedding model.
+
+4. Store in Vector DB
+   Embeddings ko vector database me save karo.
+   Examples: Pinecone, Chroma, FAISS
+
+Query  STARTS Here⬇️⬇️⬇️
+
+5. User Query Input
+   User question poochta hai.
+
+6. Query Embedding
+   Question ko bhi vector me convert karo.
+
+7. Similar Search (Retrieval)
+   Vector DB most relevant chunks find karta hai.
+
+8. Context + Prompt
+   Retrieved chunks + user query ko LLM ko bhejte hain.
+
+9. Final Answer Generation
+   LLM context use karke accurate answer deta hai.
+
+Basic Flow Diagram:
+
+Documents → Chunking → Embeddings → Vector DB
+User Query → Embedding → Similar Search → LLM → Answer
