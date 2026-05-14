@@ -7,7 +7,7 @@ const pinecone = new PineconeClient({
     apiKey: process.env.PINECONE_API_KEY,
 });
 
-
+const index = pinecone.Index("kodr-rag");
 
 export const upsertFile = async (docs) => {
 
@@ -22,19 +22,14 @@ export const upsertFile = async (docs) => {
         },
     }));
 
-    const index = await pinecone.Index("rag-kodr");
-
     const upsertResult = await index.upsert({ records })
 
     console.log("Upserted Successfully.")
 }
 
-
 export const getQueryResults = async (query) => {
 
     let vector = await embedQuery(query)
-
-    const index = await pinecone.Index("rag-kodr");
 
     const queryResult = await index.query({ vector, topK: 2, includeMetadata: true })
 
