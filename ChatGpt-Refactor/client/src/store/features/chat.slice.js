@@ -5,7 +5,8 @@ export const chatSlice = createSlice({
     initialState: {
         messages: [],
         chats: [],
-        tempChat: false
+        tempChat: false,
+        newChat : false
     },
 
     reducers: {
@@ -24,6 +25,9 @@ export const chatSlice = createSlice({
         appendNewChats: (state, { payload }) => {
             state.chats.unshift(payload)
         },
+        setNewChat : (state,{payload})=>{
+            state.newChat = payload;
+        },
         setTempChat: (state, { payload }) => {
             state.tempChat = state.tempChat ? false : true
         }
@@ -31,5 +35,5 @@ export const chatSlice = createSlice({
 
 })
 
-export const { setMessages, appendMessages, appendAiChunks, setChats, appendNewChats , setTempChat } = chatSlice.actions;
+export const { setMessages, appendMessages, appendAiChunks, setChats, appendNewChats , setTempChat,setNewChat } = chatSlice.actions;
 export default chatSlice.reducer

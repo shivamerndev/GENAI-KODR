@@ -1,6 +1,6 @@
 import axiosUtils from "../utils/axios.utils"
 
-export const getAiResponse = async (input, chatId, getChunks, getTitleData) => {
+export const getAiResponse = async (input, chatId, getChunks, getTitleData,onComplete) => {
 
     const res = await fetch("/api/chats", {
         method: "POST",
@@ -31,6 +31,8 @@ export const getAiResponse = async (input, chatId, getChunks, getTitleData) => {
             }
         })
     }
+
+    onComplete()
 }
 
 export const getTempAiResponse = async (input, temp, getChunks) => {
@@ -62,6 +64,10 @@ export const getTempAiResponse = async (input, temp, getChunks) => {
 }
 
 export const getChats = () => axiosUtils.get("/chats")
+
+export const deleteChats = (chatId) => axiosUtils.delete("/chats/chat", { data: { chatId } })
+
+export const renameChat = (chatId, title) => axiosUtils.patch("/chats/chat", { chatId, title })
 
 export const saveMessages = (data) => axiosUtils.post("/chats/messages", data)
 

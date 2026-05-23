@@ -85,6 +85,35 @@ export const getChatTitles = async (req, res) => {
     res.status(200).json({ message: "Chats Fetched Successfully.", chats: data })
 }
 
+export const deleteChats = async (req, res) => {
+
+    const {chatId} = req.body;
+
+    try {
+
+        await Promise.all([
+            chatDao.deleteChats(chatId),
+            chatDao.deleteMessages(chatId)
+        ])
+
+        res.status(200).json({ message: "Chat deleted successfully" })
+
+    } catch (error) {
+        res.status(400).json({ message: error.message })
+    }
+
+}
+
+export const renameChat = async (req, res) => {
+    const { chatId, title } = req.body;
+    try {
+        const updatedChat = await chatDao.renameChat(chatId, title);
+        res.status(200).json({ message: "Chat renamed successfully", chat: updatedChat });
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+}
+
 export const getChatMessages = async (req, res) => {
 
     const { chatId } = req.params;
