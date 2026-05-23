@@ -1,6 +1,7 @@
+import { useCallback } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAiResponse, getChats, getMessages, getTempAiResponse, saveMessages } from "../services/chat.service";
-import { appendAiChunks, appendMessages, appendNewChats, setChats, setMessages, setTempChat } from "../store/features/chat.slice";
+import { deleteChats, getAiResponse, getChats, getMessages, getTempAiResponse, saveMessages, renameChat } from "../services/chat.service";
+import { appendAiChunks, appendMessages, appendNewChats, setChats, setMessages, setNewChat, setTempChat } from "../store/features/chat.slice";
 import { useNavigate } from "react-router-dom"
 
 const useChat = () => {
@@ -15,26 +16,36 @@ const useChat = () => {
     const handleAiResponse = (input, chatId, temp) => {
 
         if (!chatId) {
-            dispatch(appendMessages([{
-                role: "user",
-                content: input,
-                chatId,
-            }, {
-                role: "AI",
-                content: "",
-                chatId,
-            }]))
+            dispatch(setNewChat(true))
         }
 
-        getAiResponse(input, chatId, (chunk) => {
-            dispatch(appendAiChunks(chunk))
-        }, (title) => {
-            navigate("/c/" + title.chatId)
-            dispatch(appendNewChats(title))
-        })
+        dispatch(appendMessages([{
+            role: "user",
+            content: input,
+            chatId,
+        }, {
+            role: "AI",
+            content: "",
+            chatId,
+        }]))
+
+
+        getAiResponse(input, chatId,
+            (chunk) => {
+                dispatch(appendAiChunks(chunk))
+            },
+            (title) => {
+                dispatch(appendNewChats(title))
+                navigate("/c/" + title.chatId, { replace: true })
+            },
+            () => {
+                dispatch(setNewChat(false))
+            }
+        )
+
     }
 
-    const handleSetTempChat = ()=>{
+    const handleSetTempChat = () => {
         dispatch(setTempChat())
     }
 
@@ -58,15 +69,25 @@ const useChat = () => {
         dispatch(setChats(data.chats))
     }
 
-    const handleGetMessages = async (chatId) => {
+    const handleDeleteChat = async (chatId) => {
 
-        let { data } = await getMessages(chatId)
-
-        dispatch(setMessages(data.messages))
-        console.log(data.messages, messages)
+        await deleteChats(chatId)
+        handleGetChats()
+        navigate("/")
     }
 
-    return { handleAiResponse, handleTempAiResponse, handleGetChats, handleGetMessages, handleCleanUp }
+    const handleGetMessages = async (chatId) => {
+        let { data } = await getMessages(chatId)
+        dispatch(setMessages(data.messages))
+    }
+
+
+    const handleRenameChat = async (chatId, title) => {
+        await renameChat(chatId, title)
+        await handleGetChats()
+    }
+
+    return { handleAiResponse, handleTempAiResponse, handleGetChats, handleGetMessages, handleCleanUp, handleDeleteChat, handleRenameChat }
 }
 
 export default useChat;

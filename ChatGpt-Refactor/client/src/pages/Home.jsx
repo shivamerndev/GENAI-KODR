@@ -4,7 +4,6 @@ import Messages from '../components/Messages'
 import InputBar from '../components/InputBar'
 import useSSE from '../hooks/useSSE'
 import { useParams, useSearchParams } from 'react-router-dom'
-import Chat from './Chat'
 import { useState } from 'react'
 
 const Home = () => {
@@ -32,8 +31,10 @@ const Home = () => {
             <SideNav chatId={chatId} />
             <div className='  w-3/5 mx-auto flex flex-col items-center justify-between gap-4 p-4'>
                 <Messages setTemp={setTemp} setQuery={setSearchParams} temp={temp} chatId={chatId} />
-                {/* <InputBar chatId={chatId} /> */}
-                <Chat temp={temp} chatId={chatId} />
+                <div>
+                    <h1>Temprory Chat</h1>
+                </div>
+                <InputBar chatId={chatId} />
             </div>
         </div>
     )

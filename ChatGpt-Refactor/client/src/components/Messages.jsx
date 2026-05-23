@@ -1,55 +1,62 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useSelector } from 'react-redux'
 import useChat from '../hooks/useChat.js'
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { CheckIcon, MessageCircle, MessageCircleDashed } from 'lucide-react'
+import { Bot } from 'lucide-react'
 
 const Messages = ({ chatId, temp, setQuery, setTemp }) => {
 
     const messages = useSelector(state => state.chat.messages)
-    const { handleGetMessages, handleCleanUp } = useChat()
+    const isNewChat = useSelector(state => state.chat.newChat)
 
+    const { handleGetMessages, handleCleanUp } = useChat()
+    const bottomRef = useRef(null)
 
     useEffect(() => {
 
+        if (isNewChat) {
+            return;
+        }
+
         if (chatId) {
             handleGetMessages(chatId)
-            console.log("fetching messages for chatId: ", chatId)
         } else {
             handleCleanUp()
         }
+    }, [chatId, isNewChat])
 
-        // return () => {
-        //     handleCleanUp()
-        // }
 
-    }, [chatId])
+    useEffect(() => {
+        bottomRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }, [messages])
+
 
     return (
-        <>
-            {
-                <div className='flex  no-scrollbar w-10/11 flex-col p-4 gap-8 h-full overflow-y-auto'>
-                    {messages.map((message, index) => (<p key={index} className={' py-1 px-4 ' + (message.role === "user" ? "ml-auto   rounded-full bg-zinc-800" : "mr-auto ")}> <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown></p>))}
-                </div >
-                // : <div className='flex flex-col justify-center h-full text-3xl items-center gap-4 mt-20'>
-                //     <h1>  {temp ? "Temporary Chat" : "Start A New Chat"}</h1>
-                //     {temp && <p className='text-base'>This chat won’t appear in your chat history, and won’t be used to train our models.</p>}
-
-                //     <button onClick={() => {
-                //         if (temp) {
-                //             setQuery({})
-                //         } else {
-                //             setQuery({ temp: "true" })
-                //         }
-                //         setTemp(!temp)
-                //     }} className="absolute cursor-pointer top-1 right-4 rotate-270 p-2 rounded-full">
-                //         <MessageCircleDashed />
-                //         {temp && <CheckIcon className='rotate-90 w-3 absolute top-2 right-3.5' />}
-                //     </button>
-                // </div>
-            }
-        </>
+        <div className='flex flex-col w-full h-full overflow-y-auto px-4 py-6 gap-6'>
+            {messages.map((message, index) =>
+                message.role === 'user' ? (
+                    <div key={index} className='flex justify-end'>
+                        <div className='max-w-[75%] bg-zinc-800 text-zinc-100 rounded-2xl rounded-br-sm px-4 py-2.5 text-sm leading-relaxed shadow-sm'>
+                            {message.content}
+                        </div>
+                    </div>
+                ) : (
+                    <div key={index} className='flex items-start gap-3 max-w-[85%]'>
+                        <div className='shrink-0 w-7 h-7 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mt-0.5'>
+                            <Bot className='w-3.5 h-3.5 text-emerald-400' />
+                        </div>
+                        <div className='text-sm text-zinc-200 leading-relaxed prose prose-invert prose-sm max-w-none
+                            prose-p:my-1 prose-pre:bg-zinc-900 prose-pre:border prose-pre:border-zinc-800 prose-pre:rounded-lg
+                            prose-code:text-emerald-400 prose-code:bg-zinc-900 prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                            prose-headings:text-zinc-100 prose-strong:text-zinc-100 prose-a:text-emerald-400'>
+                            <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
+                        </div>
+                    </div>
+                )
+            )}
+            <div ref={bottomRef} />
+        </div>
     )
 }
 
