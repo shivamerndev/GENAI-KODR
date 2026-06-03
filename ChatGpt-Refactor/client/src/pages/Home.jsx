@@ -2,13 +2,10 @@ import { useEffect } from 'react'
 import SideNav from '../components/SideNav'
 import Messages from '../components/Messages'
 import InputBar from '../components/InputBar'
-import useSSE from '../hooks/useSSE'
 import { useParams, useSearchParams } from 'react-router-dom'
 import { useState } from 'react'
 
 const Home = () => {
-
-    const { handleGetSSE } = useSSE()
 
     const chatId = useParams().chatId
     const [temp, setTemp] = useState(false);
@@ -17,8 +14,6 @@ const Home = () => {
 
     useEffect(() => {
         document.title = 'ChatGPT'
-
-        // handleGetSSE()
 
         if (searchParams.get("temp")) {
             setTemp(true)

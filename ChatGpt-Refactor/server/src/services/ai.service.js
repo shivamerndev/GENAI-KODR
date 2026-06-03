@@ -2,8 +2,12 @@ import { ChatMistralAI } from "@langchain/mistralai";
 import { createAgent, toolStrategy } from "langchain"
 import z from "zod";
 import { latest_info } from "./tavily.service.js";
+import { MISTRAL_API_KEY } from "../configs/env.js";
 
-const model = new ChatMistralAI({ model: "mistral-medium-latest" });
+const model = new ChatMistralAI({
+    apiKey: MISTRAL_API_KEY,
+    model: "mistral-medium-latest"
+});
 
 const agent = createAgent({
     model: model,

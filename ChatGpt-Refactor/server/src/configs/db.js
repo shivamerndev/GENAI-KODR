@@ -1,5 +1,8 @@
 import { connect } from "mongoose";
 import { MONGO_URI } from "./env.js";
+import dns from "dns"
+
+dns.setServers(["8.8.8.8"])
 
 
 export const connectDB = async () => {

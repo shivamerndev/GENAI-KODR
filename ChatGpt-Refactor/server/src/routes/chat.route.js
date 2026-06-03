@@ -16,7 +16,4 @@ chatRouter.get("/chat/:chatId",userAuth,getChatMessages)
 chatRouter.delete("/chat",userAuth,deleteChats)
 chatRouter.patch("/chat",userAuth,renameChat)
 
-chatRouter.get("/events", eventSource)
-
-
 export default chatRouter;
