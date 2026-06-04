@@ -11,10 +11,7 @@ const model = new ChatMistralAI({
 
 const agent = createAgent({
     model: model,
-    tools: [latest_info],
-    // responseFormat: toolStrategy(z.object({
-    //     tavilyRes: z.string().describe("A concise answer for the given input")
-    // }))
+    tools: [latest_info]
 })
 
 const titleAgent = createAgent({
