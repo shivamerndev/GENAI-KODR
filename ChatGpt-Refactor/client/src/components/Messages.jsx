@@ -91,11 +91,11 @@ const Messages = ({ chatId }) => {
     }, [messages])
 
     return (
-        <div className='flex-1 w-full max-w-3xl mx-auto overflow-y-auto no-scrollbar px-3 sm:px-6 py-6 space-y-6'>
+        <div className='flex-1 w-full max-w-4xl mx-auto overflow-y-auto no-scrollbar px-3 sm:px-6 py-6 pb-32 space-y-6'>
             {messages.map((message, index) =>
                 message.role === 'user' ? (
                     <div key={index} className='flex justify-end group/msg'>
-                        <div className='relative max-w-[85%] sm:max-w-[75%] bg-gradient-to-r from-zinc-800 to-zinc-800/90 text-zinc-100 rounded-2xl rounded-tr-xs px-4 sm:px-5 py-3 text-[15px] leading-relaxed shadow-sm border border-zinc-700/40'>
+                        <div className='relative max-w-[85%] sm:max-w-[75%] bg-gradient-to-r from-zinc-800 to-zinc-800/90 text-zinc-100 rounded-2xl rounded-tr-xs px-4 sm:px-5 py-3 text-sm font-semibold leading-relaxed shadow-sm border border-zinc-700/40'>
                             {message.content}
                             <button 
                                 onClick={() => handleCopyMessage(message.content, index)}

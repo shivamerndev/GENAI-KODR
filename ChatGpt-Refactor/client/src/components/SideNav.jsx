@@ -27,7 +27,12 @@ const SideNav = ({ chatId }) => {
     const [imgError, setImgError] = useState(false);
 
     const navigate = useNavigate();
-    const { handleGetChats, handleDeleteChat, handleRenameChat } = useChat();
+    const { handleGetChats, handleDeleteChat, handleRenameChat, handleCleanUp } = useChat();
+
+    const handleNewChat = () => {
+        handleCleanUp();
+        navigate("/");
+    };
 
     const handleSaveRename = async (idToRename) => {
         if (renameText.trim() && renameText !== chats.find(c => c._id === idToRename)?.title) {
@@ -64,7 +69,7 @@ const SideNav = ({ chatId }) => {
                 {/* Brand Header */}
                 <div className="flex items-center justify-between px-2 pt-1 pb-3">
                     <div 
-                        onClick={() => navigate("/")} 
+                        onClick={handleNewChat} 
                         className="flex items-center gap-2.5 cursor-pointer group"
                     >
                         <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-emerald-500/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
@@ -83,7 +88,7 @@ const SideNav = ({ chatId }) => {
 
                 {/* New Chat Button */}
                 <button
-                    onClick={() => navigate("/")}
+                    onClick={handleNewChat}
                     className="w-full group relative flex items-center justify-between gap-3 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-zinc-900 to-zinc-900/90 hover:from-emerald-900/50 hover:via-zinc-800 hover:to-zinc-800 hover:border-emerald-500/60 px-3.5 py-2.5 my-2 cursor-pointer text-sm font-semibold text-zinc-100 hover:text-white transition-all duration-200 active:scale-[0.98] shadow-lg shadow-black/30"
                 >
                     <div className="flex items-center gap-2.5">
