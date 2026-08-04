@@ -28,9 +28,9 @@ const Home = () => {
 
     
     return (
-        <div className='h-screen flex w-full text-white bg-zinc-950'>
+        <div className='h-screen flex w-full text-white bg-zinc-950 overflow-hidden'>
             <SideNav chatId={chatId} />
-            <div className=' w-full mx-auto flex flex-col items-center justify-between gap-4 p-4 relative '>
+            <div className='flex-1 h-full flex flex-col items-center justify-between p-4 relative overflow-hidden'>
                 {chatId ?
                     <>
                         <Messages chatId={chatId} />

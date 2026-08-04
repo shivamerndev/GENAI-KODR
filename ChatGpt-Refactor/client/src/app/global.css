@@ -1,6 +1,27 @@
 @import "tailwindcss";
 
-.no-scrollbar{
-
-    scrollbar-width: none;
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Sleek custom scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
