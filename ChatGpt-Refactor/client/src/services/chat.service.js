@@ -1,6 +1,21 @@
 import axiosUtils from "../utils/axios.utils"
 
-export const getAiResponse = async (input, chatId, getChunks, getTitleData,onComplete) => {
+export const uploadPdfFile = async (file, chatId) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    if (chatId) {
+        formData.append("chatId", chatId);
+    }
+
+    const response = await axiosUtils.post("/chats/upload-pdf", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+    return response.data;
+};
+
+export const getAiResponse = async (input, chatId, fileId, fileName, getChunks, getTitleData, onComplete) => {
 
     const res = await fetch("/api/chats", {
         method: "POST",
@@ -8,7 +23,7 @@ export const getAiResponse = async (input, chatId, getChunks, getTitleData,onCom
             "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ input, chatId })
+        body: JSON.stringify({ input, chatId, fileId, fileName })
     })
 
 
@@ -35,7 +50,7 @@ export const getAiResponse = async (input, chatId, getChunks, getTitleData,onCom
     onComplete()
 }
 
-export const getTempAiResponse = async (input, temp, getChunks) => {
+export const getTempAiResponse = async (input, temp, fileId, getChunks) => {
 
     const res = await fetch("/api/chats/temp", {
         method: "POST",
@@ -43,23 +58,27 @@ export const getTempAiResponse = async (input, temp, getChunks) => {
             "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ input, temp })
+        body: JSON.stringify({ input, temp, fileId })
     })
 
-
     const decoder = new TextDecoder()
+    let buffer = ""
 
     for await (const chunk of res.body) {
+        buffer += decoder.decode(chunk, { stream: true })
+        const lines = buffer.split("\n\n")
+        buffer = lines.pop() || ""
 
-        const text = decoder.decode(chunk)
-
-        const lines = text.split("\n\n").forEach(e => {
-
-            if (e.startsWith("chunk:")) {
-                let data = JSON.parse(e.replace("chunk: ", "")).text
-                getChunks(data)
+        for (const line of lines) {
+            if (line.startsWith("chunk:")) {
+                try {
+                    let data = JSON.parse(line.replace("chunk: ", "")).text
+                    getChunks(data)
+                } catch (err) {
+                    console.error("Error parsing chunk:", err)
+                }
             }
-        })
+        }
     }
 }
 

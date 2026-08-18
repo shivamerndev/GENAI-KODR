@@ -27,15 +27,10 @@ export const latest_info = tool(async ({ input }) => {
 
 // You can also easily extract content from URLs:
 
-// const response = await tvly.extract(
-//   "https://en.wikipedia.org/wiki/Lionel_Messi"
-// );
+// const response = await tvly.extract("https://en.wikipedia.org/wiki/Lionel_Messi");
 
 // Tavily also allows you to perform a smart crawl starting at a given URL.
 
-// const response = await client.crawl(
-// "https://docs.tavily.com", { instructions: "Find all pages on the Python SDK" }
-// );
-
+// const response = await client.crawl("https://docs.tavily.com",{instructions: "Find all pages on the Python SDK"});
 
 // console.log(response);

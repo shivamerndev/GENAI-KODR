@@ -22,12 +22,19 @@ const titleAgent = createAgent({
     }))
 })
 
-const getAIResponse = async (userInput) => await agent.stream({
-    messages: [{
-        role: "user",
-        content: userInput
-    }]
-}, { streamMode: "messages" })
+const getAIResponse = async (userInput, context = "") => {
+    let content = userInput;
+    if (context && context.trim()) {
+        content = `--- Relevant Document Context (RAG) ---\n${context}\n--- End of Context ---\n\nUser Question: ${userInput}`;
+    }
+
+    return await agent.stream({
+        messages: [{
+            role: "user",
+            content
+        }]
+    }, { streamMode: "messages" });
+};
 
 const getTitle = async (userInput) => await titleAgent.invoke({
     messages: [{

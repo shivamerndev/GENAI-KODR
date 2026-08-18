@@ -15,6 +15,12 @@ const MessageSchema = new Schema({
     content: {
         type: String,
         required: true
+    },
+    fileName: {
+        type: String
+    },
+    fileId: {
+        type: String
     }
     
 }, { timestamps: true });

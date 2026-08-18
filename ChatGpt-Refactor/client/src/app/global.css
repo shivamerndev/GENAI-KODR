@@ -1,6 +1,140 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&display=swap');
 
-.no-scrollbar{
+:root,
+[data-theme="dark"] {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-ai: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
 
-    scrollbar-width: none;
+  /* Dark Chocolaty Theme Palette (Default) */
+  --bg-main: #1b0c09;
+  --bg-sidebar: #241717;
+  --bg-surface: #241813;
+  --bg-surface-hover: #31211a;
+  --bg-input: #2e201abe;
+  --bg-user-msg: #2d1e17;
+  --bg-code: #0f0907;
+  --bg-code-header: #180f0c;
+  --bg-popup: #211611;
+
+  --border-subtle: rgba(217, 119, 36, 0.15);
+  --border-medium: #3d2b22;
+  --border-focus: #c86d3b;
+
+  --text-primary: #f5efe6;
+  --text-secondary: #d4c3b3;
+  --text-muted: #9e8a78;
+  --text-inverse: #140d0b;
+
+  --accent-primary: #d97724;
+  --accent-hover: #e68835;
+  --accent-subtle: rgba(217, 119, 36, 0.15);
+  --accent-border: rgba(217, 119, 36, 0.35);
+  --accent-glow: rgba(217, 119, 36, 0.25);
+  
+  --scrollbar-thumb: rgba(217, 119, 36, 0.25);
+  --scrollbar-thumb-hover: rgba(217, 119, 36, 0.45);
+}
+
+[data-theme="light"] {
+  --font-sans: 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-ai: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
+  --font-mono: 'Fira Code', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+  /* Light Theme Palette (Ready for future toggle feature) */
+  --bg-main: #fcf9f5;
+  --bg-sidebar: #f3ebe1;
+  --bg-surface: #e8dbcd;
+  --bg-surface-hover: #dfcebd;
+  --bg-input: #ffffff;
+  --bg-user-msg: #f3e5d7;
+  --bg-code: #251b17;
+  --bg-code-header: #1d1411;
+  --bg-popup: #ffffff;
+
+  --border-subtle: #e3d3c3;
+  --border-medium: #d1bfae;
+  --border-focus: #d97724;
+
+  --text-primary: #2b1c15;
+  --text-secondary: #5c473c;
+  --text-muted: #8c776b;
+  --text-inverse: #ffffff;
+
+  --accent-primary: #c86d3b;
+  --accent-hover: #b55c2a;
+  --accent-subtle: rgba(200, 109, 59, 0.15);
+  --accent-border: rgba(200, 109, 59, 0.35);
+  --accent-glow: rgba(200, 109, 59, 0.25);
+  
+  --scrollbar-thumb: rgba(200, 109, 59, 0.3);
+  --scrollbar-thumb-hover: rgba(200, 109, 59, 0.5);
+}
+
+@theme {
+  --font-sans: var(--font-sans);
+  --font-ai: var(--font-ai);
+  --font-mono: var(--font-mono);
+
+  --color-bg-main: var(--bg-main);
+  --color-bg-sidebar: var(--bg-sidebar);
+  --color-bg-surface: var(--bg-surface);
+  --color-bg-surface-hover: var(--bg-surface-hover);
+  --color-bg-input: var(--bg-input);
+  --color-bg-user-msg: var(--bg-user-msg);
+  --color-bg-code: var(--bg-code);
+  --color-bg-code-header: var(--bg-code-header);
+  --color-bg-popup: var(--bg-popup);
+
+  --color-border-subtle: var(--border-subtle);
+  --color-border-medium: var(--border-medium);
+  --color-border-focus: var(--border-focus);
+
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+
+  --color-accent-primary: var(--accent-primary);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-subtle: var(--accent-subtle);
+  --color-accent-border: var(--accent-border);
+}
+
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Custom scrollbar matching theme */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 9999px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--bg-main);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease-in-out, color 0.25s ease-in-out;
+}
+
+#aicontent {
+  font-family: var(--font-ai);
+  color: var(--text-primary);
 }

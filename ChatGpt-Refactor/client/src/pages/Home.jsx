@@ -1,9 +1,9 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import SideNav from '../components/SideNav'
 import Messages from '../components/Messages'
 import InputBar from '../components/InputBar'
 import { useParams, useSearchParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useSelector } from 'react-redux'
 import Strat from './Strat'
 
 const Home = () => {
@@ -11,32 +11,29 @@ const Home = () => {
     const chatId = useParams().chatId
     const [temp, setTemp] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams({});
-
+    const messages = useSelector(state => state.chat.messages);
 
     useEffect(() => {
-        document.title = 'ChatGPT'
-
         if (searchParams.get("temp")) {
             setTemp(true)
         }
-
     }, [])
 
     useEffect(() => {
         setTemp(searchParams.get("temp") == "true")
     }, [searchParams])
 
-    
+
     return (
-        <div className='h-screen flex w-full text-white bg-zinc-950'>
+        <div className='h-screen flex w-full text-[var(--text-primary)] bg-[var(--bg-main)] overflow-hidden transition-colors duration-200'>
             <SideNav chatId={chatId} />
-            <div className=' w-full mx-auto flex flex-col items-center justify-between gap-4 p-4 relative '>
-                {chatId ?
-                    <>
-                        <Messages chatId={chatId} />
-                        <InputBar chatId={chatId} />
-                    </>
-                    : <Strat setQuery={setSearchParams} temp={temp} />}
+            <div className='flex-1 h-full flex flex-col items-center justify-between p-4 relative overflow-hidden'>
+                {chatId || messages.length > 0 ? (
+                    <Messages chatId={chatId} temp={temp} />
+                ) : (
+                    <Strat setQuery={setSearchParams} temp={temp} />
+                )}
+                <InputBar chatId={chatId} temp={temp} />
             </div>
         </div>
     )

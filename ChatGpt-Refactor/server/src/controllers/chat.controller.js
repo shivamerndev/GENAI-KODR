@@ -1,5 +1,6 @@
 import * as chatDao from "../dao/chat.dao.js";
 import { getAIResponse, getTitle } from "../services/ai.service.js";
+import { processAndIndexPdf, retrieveContext } from "../services/rag.service.js";
 
 
 const generateTitle = async (userInput, userId, res) => {
@@ -13,9 +14,39 @@ const generateTitle = async (userInput, userId, res) => {
     return chat
 }
 
+export const uploadPdfController = async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: "No PDF file provided" });
+        }
+
+        const { chatId } = req.body;
+        const fileId = `file_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+        const result = await processAndIndexPdf({
+            fileBuffer: req.file.buffer,
+            fileName: req.file.originalname,
+            chatId: chatId || '',
+            fileId,
+            userId: req.userId || ''
+        });
+
+        res.status(200).json({
+            message: "PDF indexed successfully",
+            fileId: result.fileId,
+            fileName: result.fileName,
+            numChunks: result.numChunks,
+            numPages: result.numPages
+        });
+    } catch (err) {
+        console.error("PDF upload error:", err.message);
+        res.status(500).json({ message: err.message || "Failed to process PDF on server." });
+    }
+};
+
 export const handleMessage = async (req, res) => {
 
-    const { input: userInput, chatId } = req.body;
+    const { input: userInput, chatId, fileId, fileName } = req.body;
 
     res.setHeader("Content-Type", "text/event-stream")
     res.setHeader("Cache-Control", "no-cache")
@@ -27,13 +58,24 @@ export const handleMessage = async (req, res) => {
         if (!chatId) {
             title = await generateTitle(userInput, req.userId, res)
         }
+        const activeChatId = chatId || title._id;
+
         await chatDao.saveMessages({
-            chatId: title._id || chatId,
+            chatId: activeChatId,
             content: userInput,
-            role: "user"
+            role: "user",
+            fileId: fileId || undefined,
+            fileName: fileName || undefined
         })
 
-        const stream = await getAIResponse(userInput)
+        // Retrieve RAG context from Pinecone DB using Mistral Embeddings
+        const context = await retrieveContext({
+            query: userInput,
+            chatId: activeChatId,
+            fileId: fileId
+        });
+
+        const stream = await getAIResponse(userInput, context)
 
         let AIMessage = ""
 
@@ -45,7 +87,7 @@ export const handleMessage = async (req, res) => {
         }
 
         await chatDao.saveMessages({
-            chatId: chatId || title._id,
+            chatId: activeChatId,
             content: AIMessage,
             role: "ai"
         })
@@ -58,18 +100,24 @@ export const handleMessage = async (req, res) => {
 
 export const handleTempMessage = async (req, res) => {
 
-    const { input: userInput } = req.body;
+    const { input: userInput, fileId } = req.body;
 
     res.setHeader("Content-Type", "text/event-stream")
     res.setHeader("Cache-Control", "no-cache")
     res.setHeader("Connection", "keep-alive")
 
     try {
+        const context = await retrieveContext({
+            query: userInput,
+            fileId: fileId
+        });
 
-        const stream = await getAIResponse(userInput)
+        const stream = await getAIResponse(userInput, context)
 
+        let AIMessage = ""
         for await (const chunk of stream) {
-            res.write(`chunk: ${JSON.stringify({ text: chunk[0].contentBlocks[0].text })}\n\n`);
+            AIMessage += chunk[0].contentBlocks[0].text;
+            res.write(`chunk: ${JSON.stringify({ text: AIMessage })}\n\n`);
         }
         res.end()
 
