@@ -28,7 +28,7 @@ const Home = () => {
 
 
     return (
-        <div className='h-screen flex w-full text-white bg-zinc-950 overflow-hidden'>
+        <div className='h-screen flex w-full text-[var(--text-primary)] bg-[var(--bg-main)] overflow-hidden transition-colors duration-200'>
             <SideNav chatId={chatId} />
             <div className='flex-1 h-full flex flex-col items-center justify-between p-4 relative overflow-hidden'>
                 {chatId || messages.length > 0 ? (

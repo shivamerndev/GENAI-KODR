@@ -12,12 +12,27 @@ import {
     Search, 
     X, 
     Bot, 
-    Check 
+    Check,
+    Sun,
+    Moon
 } from 'lucide-react';
 
 const SideNav = ({ chatId }) => {
     const user = useSelector((state) => state.auth.user);
     const chats = useSelector((state) => state.chat.chats) || [];
+
+    const [theme, setTheme] = useState(() => {
+        return localStorage.getItem('theme') || 'dark';
+    });
+
+    useEffect(() => {
+        document.documentElement.setAttribute('data-theme', theme);
+        localStorage.setItem('theme', theme);
+    }, [theme]);
+
+    const toggleTheme = () => {
+        setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
+    };
 
     const [activePopUpId, setActivePopUpId] = useState(null);
     const [editingChatId, setEditingChatId] = useState(null);
@@ -63,7 +78,7 @@ const SideNav = ({ chatId }) => {
     );
 
     return (
-        <aside className="w-72 shrink-0 bg-zinc-950/95 backdrop-blur-xl px-3.5 py-4 flex flex-col justify-between h-screen relative border-r border-zinc-800/60 shadow-2xl select-none z-20">
+        <aside className="w-72 shrink-0 bg-[var(--bg-sidebar)] backdrop-blur-xl px-3.5 py-4 flex flex-col justify-between h-screen relative border-r border-[var(--border-subtle)] shadow-2xl select-none z-20 transition-colors duration-200">
             {/* Top Brand Header & Navigation */}
             <div className="flex flex-col flex-1 min-h-0">
                 {/* Brand Header */}
@@ -72,32 +87,46 @@ const SideNav = ({ chatId }) => {
                         onClick={handleNewChat} 
                         className="flex items-center gap-2.5 cursor-pointer group"
                     >
-                        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 p-0.5 shadow-lg shadow-emerald-500/20 flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
-                            <Bot className="w-5 h-5 text-zinc-950 stroke-[2.5]" />
+                        <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[var(--accent-primary)] to-[var(--accent-hover)] p-0.5 shadow-lg shadow-[var(--accent-glow)] flex items-center justify-center group-hover:scale-105 transition-transform duration-200">
+                            <Bot className="w-5 h-5 text-[var(--text-inverse)] stroke-[2.5]" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-base font-bold tracking-tight text-white group-hover:text-emerald-400 transition-colors">
+                            <span className="text-base font-bold tracking-tight text-[var(--text-primary)] group-hover:text-[var(--accent-primary)] transition-colors">
                                 Kodr AI
                             </span>
                         </div>
                     </div>
-                    <span className="text-[10px] font-semibold text-emerald-400 bg-emerald-950/80 px-2 py-0.5 rounded-full border border-emerald-500/30 shadow-sm">
-                        v2.0
-                    </span>
+                    <div className="flex items-center gap-1.5">
+                        <button
+                            onClick={toggleTheme}
+                            className="p-1.5 rounded-lg bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-surface-hover)] text-[var(--text-muted)] hover:text-[var(--accent-primary)] transition-all cursor-pointer shadow-sm active:scale-95"
+                            title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
+                            aria-label="Toggle theme"
+                        >
+                            {theme === 'dark' ? (
+                                <Sun className="w-3.5 h-3.5 transition-transform duration-300 hover:rotate-45" />
+                            ) : (
+                                <Moon className="w-3.5 h-3.5 transition-transform duration-300 hover:-rotate-12" />
+                            )}
+                        </button>
+                        <span className="text-[10px] font-semibold text-[var(--accent-primary)] bg-[var(--accent-subtle)] px-2 py-0.5 rounded-full border border-[var(--accent-border)] shadow-sm">
+                            v2.0
+                        </span>
+                    </div>
                 </div>
 
                 {/* New Chat Button */}
                 <button
                     onClick={handleNewChat}
-                    className="w-full group relative flex items-center justify-between gap-3 rounded-xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/40 via-zinc-900 to-zinc-900/90 hover:from-emerald-900/50 hover:via-zinc-800 hover:to-zinc-800 hover:border-emerald-500/60 px-3.5 py-2.5 my-2 cursor-pointer text-sm font-semibold text-zinc-100 hover:text-white transition-all duration-200 active:scale-[0.98] shadow-lg shadow-black/30"
+                    className="w-full group relative flex items-center justify-between gap-3 rounded-xl border border-[var(--accent-border)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-hover)] px-3.5 py-2.5 my-2 cursor-pointer text-sm font-semibold text-[var(--text-primary)] transition-all duration-200 active:scale-[0.98] shadow-lg shadow-black/20"
                 >
                     <div className="flex items-center gap-2.5">
-                        <div className="w-6 h-6 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center group-hover:bg-emerald-500 group-hover:text-zinc-950 transition-all duration-300 group-hover:rotate-90">
+                        <div className="w-6 h-6 rounded-lg bg-[var(--accent-subtle)] text-[var(--accent-primary)] flex items-center justify-center group-hover:bg-[var(--accent-primary)] group-hover:text-[var(--text-inverse)] transition-all duration-300 group-hover:rotate-90">
                             <Plus className="w-4 h-4 stroke-[2.5]" />
                         </div>
                         <span>New Chat</span>
                     </div>
-                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-zinc-400 bg-zinc-800/80 rounded border border-zinc-700/60 shadow-inner">
+                    <kbd className="hidden sm:inline-block px-1.5 py-0.5 text-[10px] font-mono text-[var(--text-muted)] bg-[var(--bg-main)] rounded border border-[var(--border-medium)] shadow-inner">
                         ⌘N
                     </kbd>
                 </button>
@@ -105,18 +134,18 @@ const SideNav = ({ chatId }) => {
                 {/* Search Input (visible if > 3 chats) */}
                 {chats.length > 3 && (
                     <div className="relative my-2 px-0.5">
-                        <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-zinc-500 pointer-events-none" />
+                        <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[var(--text-muted)] pointer-events-none" />
                         <input
                             type="text"
                             placeholder="Search chats..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-zinc-900/60 border border-zinc-800/80 rounded-lg pl-8 pr-7 py-1.5 text-xs text-zinc-200 placeholder-zinc-500 focus:outline-none focus:border-emerald-500/50 focus:ring-1 focus:ring-emerald-500/20 transition-all"
+                            className="w-full bg-[var(--bg-main)] border border-[var(--border-medium)] rounded-lg pl-8 pr-7 py-1.5 text-xs text-[var(--text-primary)] placeholder-[var(--text-muted)] focus:outline-none focus:border-[var(--border-focus)] focus:ring-1 focus:ring-[var(--accent-glow)] transition-all"
                         />
                         {searchQuery && (
                             <button
                                 onClick={() => setSearchQuery("")}
-                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 p-0.5 rounded cursor-pointer"
+                                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[var(--text-muted)] hover:text-[var(--text-primary)] p-0.5 rounded cursor-pointer"
                             >
                                 <X className="w-3 h-3" />
                             </button>
@@ -126,26 +155,26 @@ const SideNav = ({ chatId }) => {
 
                 {/* Section Header */}
                 <div className="flex items-center justify-between px-2 mt-3 mb-2">
-                    <span className="text-[10px] font-bold tracking-wider uppercase text-zinc-500 flex items-center gap-1.5">
+                    <span className="text-[10px] font-bold tracking-wider uppercase text-[var(--text-muted)] flex items-center gap-1.5">
                         Recent Chats
-                        <span className="px-1.5 py-0.2 bg-zinc-800/80 text-zinc-400 rounded-full text-[9px] font-mono">
+                        <span className="px-1.5 py-0.2 bg-[var(--bg-surface)] text-[var(--text-secondary)] rounded-full text-[9px] font-mono">
                             {filteredChats.length}
                         </span>
                     </span>
-                    <div className="h-[1px] flex-1 ml-3 bg-gradient-to-r from-zinc-800/80 to-transparent" />
+                    <div className="h-[1px] flex-1 ml-3 bg-gradient-to-r from-[var(--border-medium)] to-transparent" />
                 </div>
 
                 {/* Chat List */}
                 <div className="flex-1 overflow-y-auto custom-scrollbar space-y-1 pr-1">
                     {filteredChats.length === 0 ? (
                         <div className="flex flex-col items-center justify-center py-8 text-center px-4">
-                            <div className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-600 mb-2">
+                            <div className="w-10 h-10 rounded-full bg-[var(--bg-surface)] border border-[var(--border-medium)] flex items-center justify-center text-[var(--text-muted)] mb-2">
                                 <MessageSquare className="w-5 h-5" />
                             </div>
-                            <p className="text-xs font-medium text-zinc-400">
+                            <p className="text-xs font-medium text-[var(--text-secondary)]">
                                 {searchQuery ? "No matching chats" : "No chats yet"}
                             </p>
-                            <p className="text-[11px] text-zinc-600 mt-0.5">
+                            <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                                 {searchQuery ? "Try a different search term" : "Click 'New Chat' to start!"}
                             </p>
                         </div>
@@ -162,21 +191,21 @@ const SideNav = ({ chatId }) => {
                                             onClick={() => !isEditing && navigate(`/c/${chat._id}`)}
                                             className={`group w-full relative flex justify-between items-center cursor-pointer rounded-xl px-3 py-2 text-left text-xs transition-all duration-200 ${
                                                 isActive
-                                                    ? "bg-gradient-to-r from-emerald-950/40 via-zinc-800/90 to-zinc-800/60 text-white font-medium border border-emerald-500/30 shadow-md shadow-black/40"
-                                                    : "text-zinc-400 hover:bg-zinc-800/50 hover:text-zinc-100 hover:translate-x-0.5 border border-transparent"
+                                                    ? "bg-[var(--bg-surface)] text-[var(--text-primary)] font-medium border border-[var(--accent-border)] shadow-md shadow-black/20"
+                                                    : "text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] hover:translate-x-0.5 border border-transparent"
                                             }`}
                                         >
                                             {/* Active Left Glow Bar */}
                                             {isActive && (
-                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-emerald-400 rounded-r-full shadow-[0_0_8px_rgba(52,211,153,0.8)]" />
+                                                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-5 bg-[var(--accent-primary)] rounded-r-full shadow-[0_0_8px_var(--accent-glow)]" />
                                             )}
 
                                             <div className="flex items-center gap-2.5 min-w-0 flex-1 pl-0.5">
                                                 <MessageSquare
                                                     className={`w-4 h-4 shrink-0 transition-colors ${
                                                         isActive
-                                                            ? "text-emerald-400 drop-shadow-[0_0_6px_rgba(52,211,153,0.4)]"
-                                                            : "text-zinc-500 group-hover:text-zinc-300"
+                                                            ? "text-[var(--accent-primary)] drop-shadow-[0_0_6px_var(--accent-glow)]"
+                                                            : "text-[var(--text-muted)] group-hover:text-[var(--text-secondary)]"
                                                     }`}
                                                 />
                                                 {isEditing ? (
@@ -194,11 +223,11 @@ const SideNav = ({ chatId }) => {
                                                                 }
                                                             }}
                                                             autoFocus
-                                                            className="bg-zinc-950 text-white border border-emerald-500/60 rounded-md px-2 py-0.5 text-xs w-full focus:outline-none focus:ring-1 focus:ring-emerald-500 shadow-inner"
+                                                            className="bg-[var(--bg-main)] text-[var(--text-primary)] border border-[var(--accent-primary)] rounded-md px-2 py-0.5 text-xs w-full focus:outline-none focus:ring-1 focus:ring-[var(--accent-primary)] shadow-inner"
                                                         />
                                                         <button
                                                             onClick={() => handleSaveRename(chat._id)}
-                                                            className="p-1 text-emerald-400 hover:bg-emerald-950 rounded cursor-pointer"
+                                                            className="p-1 text-[var(--accent-primary)] hover:bg-[var(--accent-subtle)] rounded cursor-pointer"
                                                         >
                                                             <Check className="w-3.5 h-3.5" />
                                                         </button>
@@ -215,9 +244,9 @@ const SideNav = ({ chatId }) => {
                                                             e.stopPropagation();
                                                             setActivePopUpId(isOpen ? null : chat._id);
                                                         }}
-                                                        className={`p-1.5 rounded-lg hover:bg-zinc-700/60 text-zinc-400 hover:text-zinc-100 transition-all duration-150 cursor-pointer ${
+                                                        className={`p-1.5 rounded-lg hover:bg-[var(--bg-surface-hover)] text-[var(--text-muted)] hover:text-[var(--text-primary)] transition-all duration-150 cursor-pointer ${
                                                             isOpen
-                                                                ? "opacity-100 bg-zinc-700/60 text-white"
+                                                                ? "opacity-100 bg-[var(--bg-surface-hover)] text-[var(--text-primary)]"
                                                                 : "opacity-0 group-hover:opacity-100 focus:opacity-100"
                                                         }`}
                                                     >
@@ -225,14 +254,14 @@ const SideNav = ({ chatId }) => {
                                                     </button>
                                                     {isOpen && (
                                                         <div
-                                                            className="absolute right-0 top-8 z-50 w-48 rounded-xl border border-zinc-800/90 bg-zinc-900/95 backdrop-blur-xl p-1.5 shadow-2xl shadow-black/80"
+                                                            className="absolute right-0 top-8 z-50 w-48 rounded-xl border border-[var(--border-medium)] bg-[var(--bg-popup)] backdrop-blur-xl p-1.5 shadow-2xl shadow-black/80"
                                                             onClick={(e) => e.stopPropagation()}
                                                         >
                                                             {confirmDeleteId === chat._id ? (
                                                                 <div className="p-2">
-                                                                    <p className="text-[11px] text-zinc-300 mb-2 leading-snug">
+                                                                    <p className="text-[11px] text-[var(--text-primary)] mb-2 leading-snug">
                                                                         Delete this chat?<br />
-                                                                        <span className="text-zinc-500 text-[10px]">This action cannot be undone.</span>
+                                                                        <span className="text-[var(--text-muted)] text-[10px]">This action cannot be undone.</span>
                                                                     </p>
                                                                     <div className="flex gap-1.5">
                                                                         <button
@@ -241,7 +270,7 @@ const SideNav = ({ chatId }) => {
                                                                                 setConfirmDeleteId(null);
                                                                                 setActivePopUpId(null);
                                                                             }}
-                                                                            className="flex-1 rounded-lg px-2 py-1 text-[11px] font-medium text-zinc-300 bg-zinc-800 hover:bg-zinc-700 hover:text-white transition-colors cursor-pointer"
+                                                                            className="flex-1 rounded-lg px-2 py-1 text-[11px] font-medium text-[var(--text-secondary)] bg-[var(--bg-surface)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
                                                                         >
                                                                             Cancel
                                                                         </button>
@@ -267,9 +296,9 @@ const SideNav = ({ chatId }) => {
                                                                             setRenameText(chat.title);
                                                                             setActivePopUpId(null);
                                                                         }}
-                                                                        className="w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-zinc-300 hover:bg-zinc-800 hover:text-white transition-colors cursor-pointer"
+                                                                        className="w-full flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-left text-xs font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-surface-hover)] hover:text-[var(--text-primary)] transition-colors cursor-pointer"
                                                                     >
-                                                                        <Pencil className="w-3.5 h-3.5 text-zinc-400" />
+                                                                        <Pencil className="w-3.5 h-3.5 text-[var(--text-muted)]" />
                                                                         Rename
                                                                     </button>
                                                                     <button
@@ -297,30 +326,61 @@ const SideNav = ({ chatId }) => {
                 </div>
             </div>
 
-            {/* Bottom User Profile Section */}
-            <div className="border-t border-zinc-800/80 pt-3 mt-2">
-                <div className="group relative flex items-center gap-3 p-2.5 rounded-xl bg-gradient-to-r from-zinc-900/80 via-zinc-900/50 to-zinc-950 border border-zinc-800/80 hover:border-zinc-700/80 hover:bg-zinc-800/50 transition-all duration-200 shadow-md">
+            {/* Bottom Section: Theme Toggle & User Profile */}
+            <div className="border-t border-[var(--border-subtle)] pt-3 mt-2 space-y-2">
+                {/* Theme Switch Control */}
+                <div className="flex items-center justify-between px-3 py-2 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-medium)] transition-all duration-200 shadow-sm">
+                    <div className="flex items-center gap-2 text-xs font-medium text-[var(--text-secondary)] select-none">
+                        {theme === 'dark' ? (
+                            <Moon className="w-4 h-4 text-[var(--accent-primary)] transition-transform duration-300" />
+                        ) : (
+                            <Sun className="w-4 h-4 text-[var(--accent-primary)] transition-transform duration-300" />
+                        )}
+                        <span>{theme === 'dark' ? 'Dark Mode' : 'Light Mode'}</span>
+                    </div>
+
+                    <button
+                        onClick={toggleTheme}
+                        aria-label="Toggle theme"
+                        className="relative w-10 h-5 rounded-full bg-[var(--bg-main)] border border-[var(--border-medium)] p-0.5 cursor-pointer transition-colors duration-300 focus:outline-none"
+                        title={`Switch to ${theme === 'dark' ? 'Light' : 'Dark'} mode`}
+                    >
+                        <div
+                            className={`w-3.5 h-3.5 rounded-full bg-gradient-to-tr from-[var(--accent-primary)] to-[var(--accent-hover)] shadow-sm transform transition-transform duration-300 ease-in-out flex items-center justify-center ${
+                                theme === 'light' ? 'translate-x-5' : 'translate-x-0'
+                            }`}
+                        >
+                            {theme === 'dark' ? (
+                                <Moon className="w-2 h-2 text-[var(--text-inverse)] stroke-[2.5]" />
+                            ) : (
+                                <Sun className="w-2 h-2 text-[var(--text-inverse)] stroke-[2.5]" />
+                            )}
+                        </div>
+                    </button>
+                </div>
+
+                <div className="group relative flex items-center gap-3 p-2.5 rounded-xl bg-[var(--bg-surface)] border border-[var(--border-subtle)] hover:border-[var(--border-medium)] hover:bg-[var(--bg-surface-hover)] transition-all duration-200 shadow-md">
                     <div className="relative shrink-0">
                         {user?.picture && !imgError ? (
                             <img
-                                className="w-9 h-9 rounded-full object-cover border border-emerald-500/40 shadow-sm"
+                                className="w-9 h-9 rounded-full object-cover border border-[var(--accent-border)] shadow-sm"
                                 src={user.picture}
                                 onError={() => setImgError(true)}
                                 alt={user?.fullname || "User"}
                             />
                         ) : (
-                            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-emerald-600 to-teal-400 text-white font-bold text-sm flex items-center justify-center border border-emerald-400/40 shadow-sm">
+                            <div className="w-9 h-9 rounded-full bg-gradient-to-tr from-[var(--accent-primary)] to-[var(--accent-hover)] text-[var(--text-inverse)] font-bold text-sm flex items-center justify-center border border-[var(--accent-border)] shadow-sm">
                                 {(user?.fullname || user?.name || "User").charAt(0).toUpperCase()}
                             </div>
                         )}
-                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-zinc-950 rounded-full shadow-[0_0_6px_rgba(16,185,129,0.8)]" />
+                        <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-[var(--accent-primary)] border-2 border-[var(--bg-sidebar)] rounded-full shadow-[0_0_6px_var(--accent-glow)]" />
                     </div>
                     <div className="flex flex-col min-w-0 flex-1">
-                        <span className="text-xs text-zinc-100 font-semibold truncate leading-tight group-hover:text-emerald-400 transition-colors">
+                        <span className="text-xs text-[var(--text-primary)] font-semibold truncate leading-tight group-hover:text-[var(--accent-primary)] transition-colors">
                             {user?.fullname || user?.name || "Guest User"}
                         </span>
-                        <span className="text-[11px] text-zinc-400 truncate leading-none mt-1 flex items-center gap-1">
-                            <Sparkles className="w-3 h-3 text-emerald-400 shrink-0" />
+                        <span className="text-[11px] text-[var(--text-muted)] truncate leading-none mt-1 flex items-center gap-1">
+                            <Sparkles className="w-3 h-3 text-[var(--accent-primary)] shrink-0" />
                             {user?.email || "Pro Plan"}
                         </span>
                     </div>

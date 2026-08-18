@@ -1,6 +1,21 @@
 import axiosUtils from "../utils/axios.utils"
 
-export const getAiResponse = async (input, chatId, getChunks, getTitleData,onComplete) => {
+export const uploadPdfFile = async (file, chatId) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    if (chatId) {
+        formData.append("chatId", chatId);
+    }
+
+    const response = await axiosUtils.post("/chats/upload-pdf", formData, {
+        headers: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+    return response.data;
+};
+
+export const getAiResponse = async (input, chatId, fileId, fileName, getChunks, getTitleData, onComplete) => {
 
     const res = await fetch("/api/chats", {
         method: "POST",
@@ -8,7 +23,7 @@ export const getAiResponse = async (input, chatId, getChunks, getTitleData,onCom
             "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ input, chatId })
+        body: JSON.stringify({ input, chatId, fileId, fileName })
     })
 
 
