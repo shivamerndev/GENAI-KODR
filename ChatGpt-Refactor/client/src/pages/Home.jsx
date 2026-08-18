@@ -14,12 +14,9 @@ const Home = () => {
     const messages = useSelector(state => state.chat.messages);
 
     useEffect(() => {
-        document.title = 'ChatGPT'
-
         if (searchParams.get("temp")) {
             setTemp(true)
         }
-
     }, [])
 
     useEffect(() => {
@@ -32,11 +29,11 @@ const Home = () => {
             <SideNav chatId={chatId} />
             <div className='flex-1 h-full flex flex-col items-center justify-between p-4 relative overflow-hidden'>
                 {chatId || messages.length > 0 ? (
-                    <Messages chatId={chatId} />
+                    <Messages chatId={chatId} temp={temp} />
                 ) : (
                     <Strat setQuery={setSearchParams} temp={temp} />
                 )}
-                <InputBar chatId={chatId} />
+                <InputBar chatId={chatId} temp={temp} />
             </div>
         </div>
     )

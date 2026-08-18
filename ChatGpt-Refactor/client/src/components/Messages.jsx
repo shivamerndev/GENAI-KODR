@@ -4,7 +4,7 @@ import useChat from '../hooks/useChat.js'
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import remarkEmoji from "remark-emoji";
-import { Bot, Copy, Check, Terminal, FileText } from 'lucide-react'
+import { Bot, Copy, Check, Terminal, FileText, MessageSquareCheck } from 'lucide-react'
 
 const CodeBlock = ({ inline, className, children, ...props }) => {
     const match = /language-(\w+)/.exec(className || '');
@@ -60,11 +60,11 @@ const CodeBlock = ({ inline, className, children, ...props }) => {
     );
 };
 
-const Messages = ({ chatId }) => {
+const Messages = ({ chatId, temp }) => {
     const messages = useSelector(state => state.chat.messages)
     const isNewChat = useSelector(state => state.chat.newChat)
 
-    const { handleGetMessages, handleCleanUp } = useChat()
+    const { handleGetMessages } = useChat()
     const bottomRef = useRef(null)
     const [copiedIndex, setCopiedIndex] = useState(null)
 
@@ -81,8 +81,6 @@ const Messages = ({ chatId }) => {
 
         if (chatId) {
             handleGetMessages(chatId)
-        } else {
-            handleCleanUp()
         }
     }, [chatId, isNewChat])
 
@@ -92,6 +90,12 @@ const Messages = ({ chatId }) => {
 
     return (
         <div className='flex-1 w-full max-w-4xl mx-auto overflow-y-auto no-scrollbar px-3 sm:px-6 py-6 pb-32 space-y-6'>
+            {!chatId && temp && (
+                <div className="flex items-center justify-center gap-2 py-1.5 px-3.5 rounded-full bg-[var(--accent-subtle)] border border-[var(--accent-border)] text-xs text-[var(--accent-primary)] font-medium max-w-fit mx-auto mb-4 shadow-sm animate-fadeIn">
+                    <MessageSquareCheck className="w-4 h-4 text-[var(--accent-primary)]" />
+                    <span>Temporary Chat — Messages are not saved to history</span>
+                </div>
+            )}
             {messages.map((message, index) =>
                 message.role === 'user' ? (
                     <div key={index} className='flex justify-end group/msg'>

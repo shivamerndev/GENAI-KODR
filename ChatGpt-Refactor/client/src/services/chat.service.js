@@ -50,7 +50,7 @@ export const getAiResponse = async (input, chatId, fileId, fileName, getChunks, 
     onComplete()
 }
 
-export const getTempAiResponse = async (input, temp, getChunks) => {
+export const getTempAiResponse = async (input, temp, fileId, getChunks) => {
 
     const res = await fetch("/api/chats/temp", {
         method: "POST",
@@ -58,23 +58,27 @@ export const getTempAiResponse = async (input, temp, getChunks) => {
             "Content-Type": "application/json"
         },
         credentials: "include",
-        body: JSON.stringify({ input, temp })
+        body: JSON.stringify({ input, temp, fileId })
     })
 
-
     const decoder = new TextDecoder()
+    let buffer = ""
 
     for await (const chunk of res.body) {
+        buffer += decoder.decode(chunk, { stream: true })
+        const lines = buffer.split("\n\n")
+        buffer = lines.pop() || ""
 
-        const text = decoder.decode(chunk)
-
-        const lines = text.split("\n\n").forEach(e => {
-
-            if (e.startsWith("chunk:")) {
-                let data = JSON.parse(e.replace("chunk: ", "")).text
-                getChunks(data)
+        for (const line of lines) {
+            if (line.startsWith("chunk:")) {
+                try {
+                    let data = JSON.parse(line.replace("chunk: ", "")).text
+                    getChunks(data)
+                } catch (err) {
+                    console.error("Error parsing chunk:", err)
+                }
             }
-        })
+        }
     }
 }
 

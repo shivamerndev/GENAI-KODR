@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux";
-import { deleteChats, getAiResponse, getChats, getMessages, renameChat } from "../services/chat.service";
+import { deleteChats, getAiResponse, getChats, getMessages, renameChat, getTempAiResponse } from "../services/chat.service";
 import { appendAiChunks, appendMessages, appendNewChats, setChats, setMessages, setNewChat, setTempChat } from "../store/features/chat.slice";
 import { useNavigate } from "react-router-dom"
 
@@ -51,17 +51,19 @@ const useChat = () => {
         dispatch(setTempChat())
     }
 
-    const handleTempAiResponse = (input, temp) => {
+    const handleTempAiResponse = (input, temp, fileId, fileName) => {
 
         dispatch(appendMessages([{
             role: "user",
             content: input,
+            fileId,
+            fileName,
         }, {
             role: "AI",
             content: "",
         }]))
 
-        getTempAiResponse(input, temp, (chunk) => {
+        getTempAiResponse(input, temp, fileId, (chunk) => {
             dispatch(appendAiChunks(chunk))
         })
     }

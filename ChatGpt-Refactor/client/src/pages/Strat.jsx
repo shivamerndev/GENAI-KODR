@@ -35,7 +35,7 @@ const Strat = ({ temp, setQuery }) => {
                 {temp ? (
                     <>
                         <MessageSquareCheck className="w-4 h-4 text-[var(--accent-primary)]" />
-                        <span>Temporary Chat</span>
+                        <span>Temporary Chat On</span>
                     </>
                 ) : (
                     <>

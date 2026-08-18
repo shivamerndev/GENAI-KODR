@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Paperclip, FileText, X, ArrowUp, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { Paperclip, FileText, X, ArrowUp, Loader2, AlertCircle, CheckCircle2, MessageSquareCheck } from 'lucide-react';
 import useChat from '../hooks/useChat';
 import { uploadPdfFile } from '../services/chat.service';
 
@@ -11,8 +11,8 @@ const formatBytes = (bytes) => {
     return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 };
 
-const InputBar = ({ chatId }) => {
-    const { handleAiResponse } = useChat();
+const InputBar = ({ chatId, temp }) => {
+    const { handleAiResponse, handleTempAiResponse } = useChat();
     const [input, setInput] = useState('');
     const [pdfFile, setPdfFile] = useState(null);
     const fileInputRef = useRef(null);
@@ -81,7 +81,11 @@ const InputBar = ({ chatId }) => {
         const fileId = pdfFile?.fileId || null;
         const fileName = pdfFile?.name || null;
 
-        handleAiResponse(promptText, chatId, fileId, fileName);
+        if (temp && !chatId) {
+            handleTempAiResponse(promptText, temp, fileId, fileName);
+        } else {
+            handleAiResponse(promptText, chatId, fileId, fileName);
+        }
 
         // Reset state
         setInput('');
@@ -118,6 +122,14 @@ const InputBar = ({ chatId }) => {
                     accept="application/pdf,.pdf"
                     className="hidden"
                 />
+
+                {/* Temporary Chat Indicator */}
+                {temp && !chatId && (
+                    <div className="mb-2 flex items-center gap-1.5 text-xs text-[var(--accent-primary)] font-medium bg-[var(--accent-subtle)] px-3 py-1 rounded-xl border border-[var(--accent-border)] w-fit shadow-xs animate-fadeIn">
+                        <MessageSquareCheck className="w-3.5 h-3.5" />
+                        <span>Temporary Chat Active — Messages will not be saved</span>
+                    </div>
+                )}
 
                 {/* Attached PDF Preview Badge */}
                 {pdfFile && (

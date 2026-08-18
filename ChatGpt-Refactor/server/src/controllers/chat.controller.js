@@ -114,8 +114,10 @@ export const handleTempMessage = async (req, res) => {
 
         const stream = await getAIResponse(userInput, context)
 
+        let AIMessage = ""
         for await (const chunk of stream) {
-            res.write(`chunk: ${JSON.stringify({ text: chunk[0].contentBlocks[0].text })}\n\n`);
+            AIMessage += chunk[0].contentBlocks[0].text;
+            res.write(`chunk: ${JSON.stringify({ text: AIMessage })}\n\n`);
         }
         res.end()
 
